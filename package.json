@@ -1,21 +1,25 @@
 {
-    "private": true,
-    "scripts": {
-        "dev": "npm run development",
-        "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-        "watch": "npm run development -- --watch",
-        "watch-poll": "npm run watch -- --watch-poll",
-        "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --disable-host-check --config=node_modules/laravel-mix/setup/webpack.config.js",
-        "prod": "npm run production",
-        "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
-    },
-    "devDependencies": {
-        "axios": "^0.19",
-        "cross-env": "^7.0",
-        "laravel-mix": "^5.0.1",
-        "lodash": "^4.17.19",
-        "resolve-url-loader": "^3.1.0",
-        "sass": "^1.15.2",
-        "sass-loader": "^8.0.0"
-    }
+	"private": true,
+	"scripts": {
+		"lint": "eslint --ext .js,.vue src",
+		"test": "echo \"No test specified\" && exit 0",
+		"build:web": "echo Starting Build && yarn build:icons && quasar build && node dist/scripts/transfer.js && echo Finished Build",
+		"build:icons": "icongenie generate -i app-icon.png",
+		"start:sql": "mysql.server start",
+		"start:test": "echo $npm_package_ssh_folders_live",
+		"start:queue": "php artisan queue:work --timeout=36000 --sansdaemon",
+		"start:web": "quasar dev",
+		"push:git": "clear && branch=\"$(git symbolic-ref -q HEAD)\" || \"dev\" && branch=${branch##refs/heads/} && branch=${branch:-HEAD} && echo Pushing to Branch \"$branch\" && echo Please type your commit message && read msg && clear && git add . && git commit -m \"$msg\" && git push origin \"$branch\"",
+		"push:live": "clear && echo Starting Live Push && yarn build:web && yarn sync:live && echo Finished Live Push",
+		"sync:live": "echo Starting File Sync && rsync -avz --delete --exclude-from=\".syncignore\" -e \"ssh -p22 -i ~/.ssh/sync\" * $npm_package_ssh_user@$npm_package_ssh_server:$npm_package_ssh_folders_live && echo Finished File Sync"
+	},
+	"devDependencies": {
+		"axios": "^0.19",
+		"cross-env": "^7.0",
+		"laravel-mix": "^5.0.1",
+		"lodash": "^4.17.19",
+		"resolve-url-loader": "^3.1.0",
+		"sass": "^1.15.2",
+		"sass-loader": "^8.0.0"
+	}
 }
